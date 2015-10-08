@@ -15,8 +15,18 @@ local sources = {
     pop = love.audio.newSource("sounds/pop.ogg", "static")
 }
 
+local colors = {
+    speaker1 = {102, 217, 239},
+    speaker2 = {253, 151, 31},
+    background = {34, 40, 42},
+    text = {208, 208, 208},
+    indicatorDit = {208, 208, 208},
+    indicatorDah = {249, 38, 114}
+}
+
 return {
     images = images,
     fonts = fonts,
-    sources = sources
+    sources = sources,
+    colors = colors
 }

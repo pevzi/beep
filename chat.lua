@@ -25,7 +25,7 @@ function Chat:initialize(l, t, w, h)
     self.tweens = flux.group()
 end
 
-function Chat:say(text, color, align)
+function Chat:say(text, color, align, pitch)
     local message = {text = text, color = color, align = align, y = self.contentHeight}
     table.insert(self.messages, message)
 
@@ -39,7 +39,13 @@ function Chat:say(text, color, align)
         self.tweens:to(self, scrollDuration, {scroll = newScroll}, scrollEasing)
     end
 
-    pop:clone():play()
+    local pop = pop:clone()
+
+    if pitch then
+        pop:setPitch(pitch)
+    end
+
+    pop:play()
 end
 
 function Chat:update(dt)
@@ -49,22 +55,18 @@ end
 function Chat:draw()
     love.graphics.setScissor(self.x, self.y, self.width, self.height)
 
-    love.graphics.push()
+    love.graphics.translate(self.x, self.y + self.scroll)
 
-        love.graphics.translate(self.x, self.y + self.scroll)
+    for i = #self.messages, 1, -1 do
+        local message = self.messages[i]
 
-        for i = #self.messages, 1, -1 do
-            local message = self.messages[i]
+        love.graphics.setColor(message.color)
+        love.graphics.printf(message.text, 0, message.y, self.width, message.align)
 
-            love.graphics.setColor(message.color)
-            love.graphics.printf(message.text, 0, message.y, self.width, message.align)
-
-            if message.y < self.contentHeight - self.height + self.scroll then
-                break
-            end
+        if message.y < self.contentHeight - self.height + self.scroll then
+            break
         end
-
-    love.graphics.pop()
+    end
 
     love.graphics.setScissor()
 end

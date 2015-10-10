@@ -3,6 +3,7 @@ local u = require "useful"
 local input = require "input"
 local morse = require "morse"
 local Chat = require "chat"
+local Scenario = require "scenario"
 
 local w = love.graphics.getWidth()
 local h = love.graphics.getHeight()
@@ -32,10 +33,10 @@ function Play:enteredState()
 
     if not self.chat then
         self.chat = Chat(chatMargin, chatMargin, w - chatMargin * 2, h - chatMargin * 2 - lineHeight)
-        self.chat:say("the quick brown fox jumps over the lazy dog", r.colors.speaker1, "left")
-        self.chat:say("that's amazing but why did you say that", r.colors.speaker2, "right")
-        self.chat:say("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", {102, 217, 239}, "left")
+        self.chat:say("Ожидаю код Морзе.", r.colors.speaker2, "right")
     end
+
+    self.scenario = Scenario(self.chat)
 end
 
 function Play:update(dt)
@@ -56,20 +57,22 @@ function Play:update(dt)
 
         if letter then
             self.buffer = self.buffer .. letter
-            self.chat:say(("the letter is \"%s\""):format(letter), r.colors.speaker2, "right")
+            self.chat:say(("Прочитана буква \"%s\"."):format(letter), r.colors.speaker2, "right")
         else
-            self.chat:say("i don't understand this", r.colors.speaker2, "right")
+            self.chat:say("Неизвестная последовательность сигналов.", r.colors.speaker2, "right")
         end
 
         self.code = ""
     end
 
     if input.clear:pressed() then
-        self.chat:say(("cleared \"%s\""):format(self.buffer), r.colors.speaker1, "left")
+        self.chat:say(("Очищен буфер: \"%s\"."):format(self.buffer), r.colors.speaker1, "left")
         self.buffer = ""
     end
 
     self.chat:update(dt)
+
+    self.scenario:update(dt)
 end
 
 function Play:draw()

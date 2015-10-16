@@ -16,12 +16,12 @@ local sources = {
 }
 
 local colors = {
-    speaker1 = {102, 217, 239},
-    speaker2 = {253, 151, 31},
-    background = {34, 40, 42},
+    speaker1 = {82, 119, 68},
+    speaker2 = {116, 120, 68},
+    background = {30, 36, 21},
     text = {208, 208, 208},
     indicatorDit = {208, 208, 208},
-    indicatorDah = {249, 38, 114}
+    indicatorDah = {135, 164, 103}
 }
 
 return {

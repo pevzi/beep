@@ -2,36 +2,62 @@ local class = require "libs.middleclass"
 local Stateful = require "libs.stateful"
 local cron = require "libs.cron"
 
-local function resume(co)
-    local ok, msg = coroutine.resume(co)
-
-    if not ok then
-        error(msg)
-    end
-end
-
-local function makeContinue()
-    local co = coroutine.running()
-
-    local function continue()
-        resume(co)
-    end
-
-    return continue, co
-end
-
 local Flow = class("Flow"):include(Stateful)
 
 function Flow:initialize(chat)
     self.chat = chat
-
     self.speakers = {}
-    self.timers = {}
+
+    self.continues = {}
+    self.workers = {}
+end
+
+function Flow:getCurrentState()
+    return self.__stateStack[#self.__stateStack]
+end
+
+function Flow:getCurrentWorker()
+    return self.workers[self:getCurrentState()]
+end
+
+function Flow:setCurrentWorker(worker)
+    self.workers[self:getCurrentState()] = worker
+end
+
+function Flow:getCurrentContinue()
+    return self.continues[self:getCurrentState()]
+end
+
+function Flow:setCurrentContinue(continue)
+    self.continues[self:getCurrentState()] = continue
 end
 
 function Flow:runCoroutine(body)
-    local co = coroutine.create(body)
-    resume(co)
+    local wrapped = coroutine.wrap(body)
+
+    local function continue()
+        self:setCurrentWorker()
+        wrapped()
+    end
+
+    self:setCurrentContinue(continue)
+    continue()
+end
+
+function Flow:resumeCoroutine()
+    local continue = self:getCurrentContinue()
+
+    if continue then
+        local worker = self:getCurrentWorker()
+
+        if not worker then
+            continue()
+        end
+
+        return true
+    end
+
+    return false
 end
 
 function Flow:registerSpeaker(id, color, align, pitch)
@@ -52,21 +78,22 @@ function Flow:say(id, text, delay)
 end
 
 function Flow:sleep(duration)
-    local continue, co = makeContinue()
+    local continue = self:getCurrentContinue()
 
-    local timer = cron.after(duration, function ()
-        self.timers[co] = nil
-        continue()
-    end)
-
-    self.timers[co] = timer
+    self:setCurrentWorker(cron.after(duration, continue))
 
     coroutine.yield()
 end
 
 function Flow:update(dt)
-    for _, timer in pairs(self.timers) do
-        timer:update(dt)
+    if self.listen then
+        self:listen(dt)
+    end
+
+    local worker = self:getCurrentWorker()
+
+    if worker then
+        worker:update(dt)
     end
 end
 

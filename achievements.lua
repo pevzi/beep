@@ -119,7 +119,7 @@ function Achievements:draw()
             local got = self.got[v]
 
             lg.setColor(got and r.colors.message or r.colors.messageDark)
-            lg.print(("%d: %s"):format(i, got and titles[v] or "???"), 20, i * 40)
+            lg.print(("%d: %s"):format(i, got and titles[v] or "???"), 20, i * 50)
         end
 
         lg.pop()

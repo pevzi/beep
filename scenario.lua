@@ -114,6 +114,7 @@ local Really = {}
 
 function Really:enteredState()
     self.beepTime = 0
+    self.talker = false
 
     self:runCoroutine(function ()
         self:say(1, "Погоди, и правда что-то пищит.", 1)
@@ -157,9 +158,10 @@ function Really:listen(dt)
     if input.beep:isDown() then
         self.beepTime = self.beepTime + dt
 
-        if self.beepTime > 10 and not self.game.achievements.got["talker"] then
+        if self.beepTime > 3 and not self.talker then
             self:say(1, "Да надоел уже пищать!")
             self.game:achieve("talker")
+            self.talker = true
         end
     end
 end
@@ -222,8 +224,7 @@ function Sentient:enteredState()
         if self.tries == 2 then
             self:say(1, "Ага, со второй попытки.", 2)
             self:say(1, "Похоже на простое совпадение.", 2)
-            self:say(2, "Не думаю...", 2)
-            self:say(2, "Можно попробовать пообщаться каким-нибудь ещё способом.", 2)
+            self:say(2, "Ну, можно попробовать пообщаться каким-нибудь ещё способом.", 3)
 
         elseif self.tries > 2 then
             self:say(1, ("Хах, с какой, с %d попытки?"):format(self.tries), 2)
@@ -309,7 +310,7 @@ function MorseNo:enteredState()
 
         self.game:achieve("haha")
 
-        self:say(1, ("Ну, может он знает только, как ответить \"%s\"."):format(morseReader.buffer), 2)
+        self:say(1, ("Ну, может, он знает только, как ответить \"%s\"."):format(morseReader.buffer), 2)
         self:say(1, "Или, если им всё-таки кто-то управляет, то просто подсмотрел только что.", 3)
         self:say(1, "Если так, то, чувствую, мы тут надолго застрянем.", 3)
         self:say(2, "Я думаю, всё равно стоит попробовать что-нибудь разузнать.", 2)
@@ -452,7 +453,7 @@ function Father:enteredState()
         self:say(2, "Не ну, а что?", 2)
         self:say(2, "Он любит всякие странные электронные штуки.", 2)
         self:say(2, "Пусть разберётся, что это за робот такой.", 2)
-        -- TODO: ...
+        -- TODO: ...?
         self:say(1, "Я всё ещё боюсь, что он какой-нибудь опасный.", 3)
         self:say(1, "Принесёшь его домой, а он взорвётся ещё.", 2)
         self:say(2, "Да нечему тут взрываться!", 1.5)
@@ -500,8 +501,9 @@ function End:enteredState()
         self:say(1, "Ох, как беднягу помяло-то...", 2)
         self:say(1, "И камера разбилась.", 2)
 
-        if self.beepTime > 0 then
+        if self.beepTime > 1 then
             self:say(1, "Ну, судя по писку, электроника вроде бы в порядке.", 2)
+            self:say(1, "И даже аккумулятор еще не сел.", 2)
         end
 
         self:say(1, "Что ж, дружище, пойдём домой?", 2)
@@ -519,8 +521,7 @@ function End:enteredState()
         self:say(2, "Походу, они нас напугались...", 2)
         self:say(2, "Развернулись и обратно пошли.", 2)
         self:say(1, "Хех, я бы на их месте сам напугался.", 2)
-        self:say(1, "Вот видишь, а если б ты перед нашим походом все-таки решил бы заскочить к своей ненаглядной,\
-            то мы могли бы и не успеть.", 4)
+        self:say(1, "Вот видишь, а если б ты перед нашим походом все-таки решил заскочить к своей ненаглядной, то мы могли бы и не успеть.", 4)
         self:say(2, "И то верно.", 4)
 
         self:sleep(1)

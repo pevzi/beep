@@ -150,6 +150,14 @@ function Scenario:initialize(chat)
     self:gotoState("Intro")
 end
 
+function Scenario:update(dt)
+    if input.fast:isDown() then
+        dt = dt * 5
+    end
+
+    Scenario.super.update(self, dt)
+end
+
 Scenario:addState("Intro", Intro)
 Scenario:addState("Near", Near)
 Scenario:addState("Noticed", Noticed)

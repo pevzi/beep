@@ -16,7 +16,7 @@ local list = {
     "haha",
     "ew",
     "poweroff",
-    "final",
+    "final"
 }
 
 local titles = {
@@ -27,8 +27,8 @@ local titles = {
     telegraphist = ".-. .- -.. .. ... -",
     haha = "Ха-ха",
     ew = "Фи",
-    poweroff = "", -- TODO: make a clever title
-    final = "", -- TODO: same
+    poweroff = "Кина не будет",
+    final = "Добро пожаловать домой"
 }
 
 local Achievements = class("Achievements")

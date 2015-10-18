@@ -16,6 +16,12 @@ local Intro = {}
 
 function Intro:enteredState()
     self:runCoroutine(function ()
+        local _, left = self.game.achievements:isComplete()
+
+        if left == 1 then
+            self:gotoState("End")
+        end
+
         self:say(1, "...вот я же говорила, что не надо было нам заходить так глубоко в этот лес!", 1)
         self:say(2, "Да не паникуй ты, всё под контролем.", 2)
         self:say(2, "Сейчас заберёмся вон на тот холмик, и там за ним будет поваленное дерево.", 3)
@@ -403,6 +409,8 @@ end
 local Father = {}
 
 function Father:enteredState()
+    self.beepTime = 0
+
     self:runCoroutine(function ()
         self:say(2, "О!", 3)
         self:say(2, "У меня идея.", 1)
@@ -424,6 +432,11 @@ function Father:enteredState()
         self:say(2, "Только она, походу, разбилась.", 2)
         self:say(1, "Ну хорошо, пусть даже не взрывается.", 4)
         self:say(1, "Но меня совсем не устраивает, что он за нами будет подслушивать.", 2)
+
+        if self.beepTime > 2 then
+            self:say(1, "Он еще и пищит, надоел уже!", 2)
+        end
+
         self:say(2, "А, это можно исправить.", 2)
         self:say(2, "Просто сейчас аккумулятор вытащу.", 3)
         self:say(2, "Вот так...", 3)
@@ -437,6 +450,64 @@ function Father:enteredState()
     end)
 end
 
+function Father:listen(dt)
+    if input.beep:isDown() then
+        self.beepTime = self.beepTime + dt
+    end
+end
+
+local End = {}
+
+function End:enteredState()
+    self.beepTime = 0
+
+    self:runCoroutine(function ()
+        self:say(1, "Если верить радару, то он где-то неподалеку.", 2)
+        self:say(2, "И угораздило же его сюда свалиться...", 2)
+        self:say(1, "Скажи спасибо, что не в океан куда-нибудь.", 2)
+        self:say(2, "О, вот же он!", 3)
+        self:say(1, "Ох, как беднягу помяло-то...", 2)
+        self:say(1, "И камера разбилась.", 2)
+
+        if self.beepTime > 0 then
+            self:say(1, "Ну, судя по писку, электроника вроде бы в порядке.", 2)
+        end
+
+        self:say(1, "Что ж, дружище, пойдём домой?", 2)
+        self:say(2, "Хм, а как вы считаете, его кто-нибудь уже находил?", 3)
+        self:say(1, "Ты имеешь в виду, не в этот раз?", 2)
+        self:say(2, "Ну, в том числе, да.", 2)
+        self:say(1, "Конечно.", 1.5)
+        self:say(1, "Все, что могло произойти, обязательно когда-то произошло.", 2)
+        self:say(1, "Пусть и не в этот раз.", 1.5)
+        self:say(2, "Думаете, кто-то мог именно сегодня забраться так глубоко в этот лес?", 2)
+        self:say(1, "Не исключаю такой возможности.", 2)
+        self:say(1, "К тому же...", 3)
+        self:say(1, "Вон, гляди.", 1)
+        self:say(1, "Как раз какие-то ребятишки идут.", 2)
+        self:say(2, "Походу, они нас напугались...", 2)
+        self:say(2, "Развернулись и обратно пошли.", 2)
+        self:say(1, "Хех, я бы на их месте сам напугался.", 2)
+        self:say(1, "Вот видишь, а если б ты перед нашим походом все-таки решил бы заскочить к своей ненаглядной,\
+            то мы могли бы и не успеть.", 4)
+        self:say(2, "И то верно.", 4)
+
+        self:sleep(1)
+
+        self.game:achieve("final")
+
+        self:sleep(3)
+
+        self.game:endGame()
+    end)
+end
+
+function End:listen(dt)
+    if input.beep:isDown() then
+        self.beepTime = self.beepTime + dt
+    end
+end
+
 local Scenario = Flow:subclass("Scenario")
 
 function Scenario:initialize(chat)
@@ -445,7 +516,7 @@ function Scenario:initialize(chat)
     self:registerSpeaker(1, r.colors.speaker1, "left")
     self:registerSpeaker(2, r.colors.speaker2, "right", 1.5)
 
-    self:gotoState("Father")
+    self:gotoState("Intro")
 end
 
 function Scenario:update(dt)
@@ -473,5 +544,6 @@ Scenario:addState("Name", Name)
 Scenario:addState("Toy", Toy)
 Scenario:addState("Flounder", Flounder)
 Scenario:addState("Father", Father)
+Scenario:addState("End", End)
 
 return Scenario

@@ -24,8 +24,8 @@ function Play:enteredState()
 
     self.chat = Chat(chatMargin, chatMargin, w - chatMargin * 2, h - chatMargin * 2 - hudHeight)
     self.hud = HUD(0, h - hudHeight, w, hudHeight)
-    self.scenario = Scenario(self)
     self.achievements = self.achievements or Achievements(h - hudHeight)
+    self.scenario = Scenario(self)
 
     self.achievements:hide()
     self.hud:showMessage("[пробел] пищать")

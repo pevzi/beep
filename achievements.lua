@@ -67,6 +67,11 @@ function Achievements:save()
     end
 end
 
+function Achievements:clear()
+    love.filesystem.remove("achievements")
+    self.got = {}
+end
+
 function Achievements:achieve(id)
     if not self.got[id] then
         self.got[id] = true

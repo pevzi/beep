@@ -9,13 +9,18 @@ local h = lg.getHeight()
 
 local list = {
     "missed",
-    "shy"
+    "shy",
+    "telegraphist",
+    "haha",
+    "ew"
 }
 
 local titles = {
     missed = "Упущенные возможности",
     shy = "Скромняша",
-
+    telegraphist = "Радист",
+    haha = "Ха-ха",
+    ew = "Фи"
 }
 
 local Achievements = class("Achievements")

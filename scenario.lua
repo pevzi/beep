@@ -168,27 +168,31 @@ local Twice = {}
 
 function Twice:enteredState()
     self.tries = 0
-    self.beeped = false
+    self.waiting = 0
 
     self:runCoroutine(function ()
         self:say(1, "Ну да, придумал тоже.", 1.5)
-        self:sleep(3)
 
-        if not self.beeped then -- TODO: if we beep once and then keep silence they shall react too
-            self:say(1, "Видишь, не хочет он с тобой разговаривать.")
-            self:say(1, "Пошли дальше.", 1.5)
-            self:say(2, "Ну подожди!", 1)
+        self:sleep()
 
-            self:sleep(5)
+        self:say(1, "Видишь, не хочет он с тобой разговаривать.")
+        self:say(1, "Пошли дальше.", 1.5)
+        self:say(2, "Ну подожди!", 1)
 
-            self:gotoState("Toy")
-        end
+        self:sleep()
+
+        self:gotoState("Toy")
     end)
 end
 
 function Twice:listen(dt)
-    if not self.beeped and input.beep:isDown() then
-        self.beeped = true
+    self.waiting = self.waiting + dt
+
+    if input.beep:isDown() then
+        self.waiting = 0
+    elseif self.waiting > 5 then
+        self.waiting = 0
+        self:resumeCoroutine()
     end
 
     local beeps = multiReader:update(dt)

@@ -88,9 +88,10 @@ end
 function Flow:sleep(duration)
     assert(coroutine.running(), "cannot sleep outside a coroutine")
 
-    local continue = self:getCurrentContinue()
-
-    self:setCurrentWorker(cron.after(duration, continue))
+    if duration then
+        local continue = self:getCurrentContinue()
+        self:setCurrentWorker(cron.after(duration, continue))
+    end
 
     coroutine.yield()
 end

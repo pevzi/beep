@@ -371,9 +371,36 @@ function Name:listen(dt)
         end
 
         if buffer == "хуй" then
-            self:gotoState("MorseEw") -- TODO: check if we say profanities for the second time
+            self:gotoState("NameEw")
         end
     end
+end
+
+local NameEw = {}
+
+function NameEw:enteredState()
+    self:runCoroutine(function ()
+        if self.game.achievements.got["ew"] then
+            self:say(2, "Эй, ну это уже не смешно!", 1)
+            self:say(1, "Видимо, он только это слово и знает.", 2)
+            self:say(1, "Всё ещё хочешь продолжить общение с ним?", 2)
+
+            self:gotoState("Father")
+
+        else
+            self:say(2, "...", 1)
+            self:say(1, "Фи, как некультурно!", 1)
+
+            self.game:achieve("ew")
+
+            self:say(1, "Еще и при детях.", 2)
+            self:say(2, "Хи-хи-хи, это твоё имя что ли?", 2)
+            self:say(2, "Нет, давай еще раз, теперь уже серьёзно.", 2)
+            self:say(2, "Как тебя зовут?", 1.5)
+
+            self:gotoState("Name")
+        end
+    end)
 end
 
 local Toy = {}
@@ -541,6 +568,7 @@ Scenario:addState("MorseNo", MorseNo)
 Scenario:addState("MorseEw", MorseEw)
 Scenario:addState("MorseGarbage", MorseGarbage)
 Scenario:addState("Name", Name)
+Scenario:addState("NameEw", NameEw)
 Scenario:addState("Toy", Toy)
 Scenario:addState("Flounder", Flounder)
 Scenario:addState("Father", Father)

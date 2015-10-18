@@ -4,6 +4,7 @@ local input = require "input"
 local Chat = require "chat"
 local HUD = require "hud"
 local Scenario = require "scenario"
+local Achievements = require "achievements"
 
 local w = love.graphics.getWidth()
 local h = love.graphics.getHeight()
@@ -23,9 +24,19 @@ function Play:enteredState()
 
     self.chat = Chat(chatMargin, chatMargin, w - chatMargin * 2, h - chatMargin * 2 - hudHeight)
     self.hud = HUD(0, h - hudHeight, w, hudHeight)
-    self.scenario = Scenario(self.chat)
+    self.scenario = Scenario(self)
+    self.achievements = self.achievements or Achievements(h - hudHeight)
 
+    self.achievements:hide()
     self.hud:showMessage("[пробел] пищать")
+end
+
+function Play:achieve(id)
+    local ok, title = self.achievements:achieve(id)
+
+    if ok then
+        self.hud:showMessage(("Достижение: %s"):format(title))
+    end
 end
 
 function Play:endGame()
@@ -46,11 +57,13 @@ function Play:update(dt)
     self.chat:update(dt)
     self.hud:update(dt)
     self.scenario:update(dt)
+    self.achievements:update(dt)
 end
 
 function Play:draw()
     self.chat:draw()
     self.hud:draw()
+    self.achievements:draw()
 end
 
 return Play

@@ -4,9 +4,9 @@ local cron = require "libs.cron"
 
 local Flow = class("Flow"):include(Stateful)
 
-function Flow:initialize(chat)
-    self.chat = chat
-    self.speakers = {}
+function Flow:initialize(game)
+    self.game = game
+    self.speakers = {} -- TODO: move speaker registration to Chat
 
     self.continues = {}
     self.workers = {}
@@ -82,10 +82,12 @@ function Flow:say(id, text, delay)
     end
 
     local speaker = self.speakers[id]
-    self.chat:say(text, speaker.color, speaker.align, speaker.pitch)
+    self.game.chat:say(text, speaker.color, speaker.align, speaker.pitch)
 end
 
 function Flow:sleep(duration)
+    assert(coroutine.running(), "cannot sleep outside a coroutine")
+
     local continue = self:getCurrentContinue()
 
     self:setCurrentWorker(cron.after(duration, continue))

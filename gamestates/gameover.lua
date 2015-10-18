@@ -3,12 +3,17 @@ local input = require "input"
 local GameOver = {}
 
 function GameOver:enteredState()
-    self.hud:showMessage("[пробел] попробовать еще раз")
+    self.achievements:show()
+    self.hud:showMessage(self.achievements:isComplete() and "Спасибо за игру." or "[пробел] попробовать еще раз")
 end
 
 function GameOver:update(dt)
     if input.beep:pressed() then
-        self:gotoState("Play")
+        if self.achievements:isComplete() then
+            love.event.quit()
+        else
+            self:gotoState("Play")
+        end
     end
 
     if input.quit:pressed() then
@@ -17,13 +22,13 @@ function GameOver:update(dt)
 
     self.chat:update(dt)
     self.hud:update(dt)
-    -- TODO: update achievements here
+    self.achievements:update(dt)
 end
 
 function GameOver:draw()
     self.chat:draw()
     self.hud:draw()
-    -- TODO: draw achievements here
+    self.achievements:draw()
 end
 
 return GameOver

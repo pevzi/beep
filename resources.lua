@@ -19,9 +19,10 @@ local colors = {
     speaker1 = {82, 119, 68},
     speaker2 = {116, 120, 68},
     background = {30, 36, 21},
-    message = {82, 119, 68},
+    message = {116, 120, 68},
     barDit = {208, 208, 208},
-    barDah = {135, 164, 103}
+    barDah = {135, 164, 103},
+    achievementsBackground = {15, 18, 10}
 }
 
 return {

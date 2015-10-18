@@ -21,7 +21,11 @@ function HUD:initialize(x, y, width, height)
 end
 
 function HUD:showMessage(text)
+    -- TODO: make a message queue
+
     self.message.text = text
+    self.message.y = self.height
+
     self.tweens:to(self.message, 0.5, {y = self.height * 0.3}):ease("quadout")
             :after(self.message, 1,   {y = self.height}):delay(2)
 end

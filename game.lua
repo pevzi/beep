@@ -1,4 +1,5 @@
 local Play = require "gamestates.play"
+local GameOver = require "gamestates.gameover"
 
 local class = require "libs.middleclass"
 local Stateful = require "libs.stateful"
@@ -10,5 +11,6 @@ function Game:initialize()
 end
 
 Game:addState("Play", Play)
+Game:addState("GameOver", GameOver)
 
 return Game

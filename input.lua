@@ -1,18 +1,18 @@
 local tactile = require "libs.tactile"
 
 local keySpace = tactile.key " "
-local keyBackspace = tactile.key "backspace"
+local keyEscape = tactile.key "escape"
 
 local beep = tactile.newButton(keySpace)
-local clear = tactile.newButton(keyBackspace)
+local quit = tactile.newButton(keyEscape)
 
 local function update()
     beep:update()
-    clear:update()
+    quit:update()
 end
 
 return {
     update = update,
     beep = beep,
-    clear = clear
+    quit = quit
 }

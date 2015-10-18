@@ -83,10 +83,11 @@ function Achievements:draw()
         lg.setColor(r.colors.achievementsBackground)
         lg.rectangle("fill", 0, 0, w, self.height)
 
-        lg.setColor(r.colors.message)
-
         for i, v in ipairs(list) do
-            lg.print(("%d: %s"):format(i, self.got[v] and titles[v] or "???"), 20, i * 40)
+            local got = self.got[v]
+
+            lg.setColor(got and r.colors.message or r.colors.messageDark)
+            lg.print(("%d: %s"):format(i, got and titles[v] or "???"), 20, i * 40)
         end
 
         lg.pop()

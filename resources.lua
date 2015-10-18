@@ -1,11 +1,3 @@
-local images = {
-
-}
-
-for k, v in pairs(images) do
-    images[k] = love.graphics.newImage("images/"..v)
-end
-
 local fonts = {
     main = love.graphics.newFont("fonts/PTS75F.ttf", 20)
 }
@@ -20,13 +12,13 @@ local colors = {
     speaker2 = {116, 120, 68},
     background = {30, 36, 21},
     message = {116, 120, 68},
+    messageDark = {54, 79, 45},
     barDit = {208, 208, 208},
     barDah = {135, 164, 103},
     achievementsBackground = {15, 18, 10}
 }
 
 return {
-    images = images,
     fonts = fonts,
     sources = sources,
     colors = colors

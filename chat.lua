@@ -4,6 +4,8 @@ local input = require "input"
 local class = require "libs.middleclass"
 local flux = require "libs.flux"
 
+local lg = love.graphics
+
 local scrollDuration = 0.5
 local scrollEasing = "quadout"
 local messageDistance = 15
@@ -53,22 +55,26 @@ function Chat:update(dt)
 end
 
 function Chat:draw()
-    love.graphics.setScissor(self.x, self.y, self.width, self.height)
+    lg.setScissor(self.x, self.y, self.width, self.height)
 
-    love.graphics.translate(self.x, self.y + self.scroll)
+    lg.push()
+
+    lg.translate(self.x, self.y + self.scroll)
 
     for i = #self.messages, 1, -1 do
         local message = self.messages[i]
 
-        love.graphics.setColor(message.color)
-        love.graphics.printf(message.text, 0, message.y, self.width, message.align)
+        lg.setColor(message.color)
+        lg.printf(message.text, 0, message.y, self.width, message.align)
 
         if message.y < self.contentHeight - self.height + self.scroll then
             break
         end
     end
 
-    love.graphics.setScissor()
+    lg.pop()
+
+    lg.setScissor()
 end
 
 return Chat

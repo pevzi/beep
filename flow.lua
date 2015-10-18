@@ -12,24 +12,32 @@ function Flow:initialize(chat)
     self.workers = {}
 end
 
-function Flow:getCurrentState()
-    return self.__stateStack[#self.__stateStack]
+local orig_gotoState = Flow.gotoState
+
+function Flow:gotoState(stateName, ...)
+    self.currentState = stateName
+
+    orig_gotoState(self, stateName, ...)
+
+    if coroutine.running() then
+        coroutine.yield() -- TODO: probably not the brightest idea
+    end
 end
 
 function Flow:getCurrentWorker()
-    return self.workers[self:getCurrentState()]
+    return self.workers[self.currentState]
 end
 
 function Flow:setCurrentWorker(worker)
-    self.workers[self:getCurrentState()] = worker
+    self.workers[self.currentState] = worker
 end
 
 function Flow:getCurrentContinue()
-    return self.continues[self:getCurrentState()]
+    return self.continues[self.currentState]
 end
 
 function Flow:setCurrentContinue(continue)
-    self.continues[self:getCurrentState()] = continue
+    self.continues[self.currentState] = continue
 end
 
 function Flow:runCoroutine(body)

@@ -14,7 +14,6 @@ local list = {
     "toy",
     "telegraphist",
     "haha",
-    "ew",
     "poweroff",
     "final"
 }
@@ -26,7 +25,6 @@ local titles = {
     toy = "Игрушка",
     telegraphist = ".-. .- -.. .. ... -",
     haha = "Ха-ха",
-    ew = "Фи",
     poweroff = "Кина не будет",
     final = "Добро пожаловать домой"
 }

@@ -324,12 +324,11 @@ end
 local MorseEw = {}
 
 function MorseEw:enteredState()
+    self.ew = true
+
     self:runCoroutine(function ()
         self:say(2, "...", 1)
         self:say(1, "Фи, как некультурно!", 1)
-
-        self.game:achieve("ew")
-
         self:say(1, "Еще и при детях.", 2)
         self:say(2, "Хи-хи-хи.", 1.5)
         self:say(1, "По крайней мере, нам теперь известно, что он знает азбуку Морзе.", 2)
@@ -385,7 +384,7 @@ local NameEw = {}
 
 function NameEw:enteredState()
     self:runCoroutine(function ()
-        if self.game.achievements.got["ew"] then
+        if self.ew then
             self:say(2, "Эй, ну это уже не смешно!", 1)
             self:say(1, "Видимо, он только это слово и знает.", 2)
             self:say(1, "Всё ещё хочешь продолжить общение с ним?", 2)
@@ -393,11 +392,10 @@ function NameEw:enteredState()
             self:gotoState("Father")
 
         else
+            self.ew = true
+
             self:say(2, "...", 1)
             self:say(1, "Фи, как некультурно!", 1)
-
-            self.game:achieve("ew")
-
             self:say(1, "Еще и при детях.", 2)
             self:say(2, "Хи-хи-хи, это твоё имя что ли?", 2)
             self:say(2, "Нет, давай еще раз, теперь уже серьёзно.", 2)

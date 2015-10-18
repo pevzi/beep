@@ -33,17 +33,44 @@ local titles = {
 
 local Achievements = class("Achievements")
 
-function Achievements:initialize(height, got)
+function Achievements:initialize(height)
     self.height = height or h
-    self.got = got or {}
     self.y = -self.height
+    self.got = {}
+
+    self:load()
 
     self.tweens = flux.group()
+end
+
+function Achievements:load()
+    local file = love.filesystem.newFile("achievements", "r")
+
+    if file then
+        for line in file:lines() do
+            self.got[line] = true
+        end
+
+        file:close()
+    end
+end
+
+function Achievements:save()
+    local file = love.filesystem.newFile("achievements", "w")
+
+    if file then
+        for k in pairs(self.got) do
+            file:write(k .. "\n")
+        end
+
+        file:close()
+    end
 end
 
 function Achievements:achieve(id)
     if not self.got[id] then
         self.got[id] = true
+        self:save()
         return true, titles[id]
     else
         return false, titles[id]

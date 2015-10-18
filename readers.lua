@@ -31,7 +31,9 @@ function MorseReader:update(dt)
         self.code = ""
     end
 
-    return letter, self.buffer
+    local value = input.beep:isDown() and self.duration / self.dahThreshold or 0
+
+    return letter, self.buffer, value
 end
 
 function MorseReader:reset()

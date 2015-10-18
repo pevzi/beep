@@ -107,6 +107,8 @@ end
 local Really = {}
 
 function Really:enteredState()
+    self.beepTime = 0
+
     self:runCoroutine(function ()
         self:say(1, "Погоди, и правда что-то пищит.", 1)
         self:say(2, "Сказал же.", 1.5)
@@ -130,16 +132,30 @@ function Really:enteredState()
         self:say(2, "Только весь покорёженный.", 2)
         self:say(2, "Как будто с большой высоты упал.", 2)
         self:say(1, "Хм, и правда...", 3)
+
+        if self.beepTime == 0 then
+            self:say(1, "Кстати, что-то он вдруг замолчал.", 2)
+        end
+
         self:say(2, "А вдруг он разумен?!", 2)
         self:say(2, "И слышит всё, что мы говорим.", 1.5)
-        self:say(1, "Пф, насмотрелся фильмов что ли?", 2)
+        self:say(1, "Пф, ты фильмов насмотрелся что ли?", 2)
         self:say(2, "Давай проверим.", 2)
-        self:say(2, "Уважаемый робот, если ты нас понимаешь, пикни два раза.", 2)
-
-        -- react to prolonged silence somehow?
+        self:say(2, "Уважаемый робот, если ты нас понимаешь, пикни дважды.", 2)
 
         self:gotoState("Twice")
     end)
+end
+
+function Really:listen(dt)
+    if input.beep:isDown() then
+        self.beepTime = self.beepTime + dt
+
+        if self.beepTime > 10 and not self.game.achievements.got["talker"] then
+            self:say(1, "Да надоел уже пищать!")
+            self.game:achieve("talker")
+        end
+    end
 end
 
 local Twice = {}
@@ -152,14 +168,14 @@ function Twice:enteredState()
         self:say(1, "Ну да, придумал тоже.", 1.5)
         self:sleep(3)
 
-        if not self.beeped then -- if we beep once and then keep silence they shall react too
+        if not self.beeped then -- TODO: if we beep once and then keep silence they shall react too
             self:say(1, "Видишь, не хочет он с тобой разговаривать.")
             self:say(1, "Пошли дальше.", 1.5)
             self:say(2, "Ну подожди!", 1)
 
             self:sleep(5)
 
-            -- toy route? or just go away disappointed?
+            self:gotoState("Toy")
         end
     end)
 end
@@ -216,7 +232,7 @@ function Sentient:enteredState()
 
         self:say(2, "О, может, азбукой Морзе?", 2.5)
         self:say(1, "Пф, ты сам-то её знаешь?", 1.5)
-        self:say(2, "Обижаешь! Меня отец ей обучал.", 1.5)
+        self:say(2, "Обижаешь! Меня батя ей обучал.", 1.5)
         self:say(2, "С год назад...", 1.5)
         self:say(1, "Ну что ж, попробуй.", 2)
         self:say(2, "Кхм-кхм.", 2)
@@ -229,16 +245,13 @@ end
 local Morse = {}
 
 function Morse:enteredState()
-    self:runCoroutine(function ()
-        morseReader:reset()
-    end)
+    morseReader:reset()
 end
 
 function Morse:listen(dt)
-    local letter, buffer = morseReader:update(dt)
+    local letter, buffer, value = morseReader:update(dt)
 
-    -- TODO: make this better-looking?
-    self.game.hud.morseBar = input.beep:isDown() and morseReader.duration / morseReader.dahThreshold or 0
+    self.game.hud.morseBar = value
 
     if letter then
         if letter == "" then
@@ -266,6 +279,14 @@ function MorseYes:enteredState()
         self:say(2, ("Он сказал \"%s\"!"):format(morseReader.buffer), 1)
 
         self.game:achieve("telegraphist")
+
+        self:say(1, "Действительно...", 2)
+        self:say(2, "Это же замечательно!", 1)
+        self:say(2, "Можно узнать, кто он такой и что он тут делает!", 1.5)
+        self:say(1, "Теперь уже и мне интересно.", 2)
+        self:say(2, "Уважаемый робот, как тебя зовут?", 2)
+
+        self:gotoState("Name")
     end)
 end
 
@@ -279,8 +300,13 @@ function MorseNo:enteredState()
         self.game:achieve("haha")
 
         self:say(1, ("Ну, может он знает только, как ответить \"%s\"."):format(morseReader.buffer), 2)
-        self:say(1, "Или, если им все-таки кто-то управляет, то просто подсмотрел только что.", 3)
+        self:say(1, "Или, если им всё-таки кто-то управляет, то просто подсмотрел только что.", 3)
         self:say(1, "Если так, то, чувствую, мы тут надолго застрянем.", 3)
+        self:say(2, "Я думаю, всё равно стоит попробовать что-нибудь разузнать.", 2)
+        self:say(2, "Например...", 2)
+        self:say(2, "Робот, как тебя зовут?", 2)
+
+        self:gotoState("Name")
     end)
 end
 
@@ -288,7 +314,7 @@ local MorseEw = {}
 
 function MorseEw:enteredState()
     self:runCoroutine(function ()
-        self:say(2, ("..."):format(morseReader.buffer), 1)
+        self:say(2, "...", 1)
         self:say(1, "Фи, как некультурно!", 1)
 
         self.game:achieve("ew")
@@ -297,6 +323,12 @@ function MorseEw:enteredState()
         self:say(2, "Хи-хи-хи.", 1.5)
         self:say(1, "По крайней мере, нам теперь известно, что он знает азбуку Морзе.", 2)
         self:say(1, "Ну, или только это слово.", 2)
+        self:say(2, "Можно попробовать дальше.", 2)
+        self:say(2, "Например, спросить, как его зовут.", 2)
+        self:say(2, "Только это, слышишь, давай в этот раз серьёзно!", 1.5)
+        self:say(2, "Как тебя зовут?", 1.5)
+
+        self:gotoState("Name")
     end)
 end
 
@@ -307,13 +339,52 @@ function MorseGarbage:enteredState()
         self:say(2, ("...%s?"):format(morseReader.buffer), 1)
         self:say(1, "Пф.", 1)
         self:say(2, "Бессмыслица какая-то.", 2)
+
+        self:gotoState("Father")
     end)
+end
+
+local Name = {}
+
+function Name:enteredState()
+    morseReader:reset()
+end
+
+function Name:listen(dt)
+    local letter, buffer, value = morseReader:update(dt)
+
+    self.game.hud.morseBar = value
+
+    if letter then
+        if utf8.len(buffer) > 3 then
+            self:gotoState("Flounder")
+        elseif letter == "" then
+            self:say(2, "...")
+        else
+            self:say(2, ("\"%s\"..."):format(letter))
+        end
+
+        if buffer == "хуй" then
+            self:gotoState("MorseEw") -- TODO: check if we say profanities for the second time
+        end
+    end
 end
 
 local Toy = {}
 
 function Toy:enteredState()
+    self:runCoroutine(function ()
+        self:say(1, "Что-то мне подсказывает, что это просто тупо игрушка какая-нибудь.", 2)
+        self:say(1, "Он нам еще ни разу вразумительно не ответил.", 2)
 
+        self.game:achieve("toy")
+
+        self:say(2, "Ну, не знаю...", 2)
+        self:say(1, "С другой стороны, что бы он тогда тут делал, в лесу?", 3)
+        self:say(2, "Скорее всего, его сигналы что-то значат, просто мы их не понимаем...", 2)
+
+        self:gotoState("Father")
+    end)
 end
 
 local Flounder = {}
@@ -323,6 +394,46 @@ function Flounder:enteredState()
         self:say(2, "Ой, подожди.")
         self:say(1, "Что такое?", 1.5)
         self:say(2, "Да что-то я сбился.", 1.5)
+        self:say(1, "Мда, радист из тебя так себе.", 2)
+
+        self:gotoState("Father")
+    end)
+end
+
+local Father = {}
+
+function Father:enteredState()
+    self:runCoroutine(function ()
+        self:say(2, "О!", 3)
+        self:say(2, "У меня идея.", 1)
+        self:say(1, "Такая же удачная, как предыдущие?", 2)
+        self:say(2, "Бе-бе-бе.", 2)
+        self:say(2, "Отнесу я его своему бате!", 2)
+        self:say(1, "Ещё чего выдумал!", 1)
+        self:say(2, "Не ну, а что?", 2)
+        self:say(2, "Он любит всякие странные электронные штуки.", 2)
+        self:say(2, "Пусть разберётся, что это за робот такой.", 2)
+        -- TODO: ...
+        self:say(1, "Я всё ещё боюсь, что он какой-нибудь опасный.", 3)
+        self:say(1, "Принесёшь его домой, а он взорвётся ещё.", 2)
+        self:say(2, "Да нечему тут взрываться!", 1.5)
+        self:say(2, "Вон, смотри, тут как раз крышка корпуса отвалилась, все внутренности видно.", 2)
+        self:say(1, "Эй-эй-эй!", 1)
+        self:say(2, "Тут вот только одна плата и всё...", 2)
+        self:say(2, "Хм, а вот это похоже на камеру.", 2)
+        self:say(2, "Только она, походу, разбилась.", 2)
+        self:say(1, "Ну хорошо, пусть даже не взрывается.", 4)
+        self:say(1, "Но меня совсем не устраивает, что он за нами будет подслушивать.", 2)
+        self:say(2, "А, это можно исправить.", 2)
+        self:say(2, "Просто сейчас аккумулятор вытащу.", 3)
+        self:say(2, "Вот так...", 3)
+        self:say(2, "Хоп!", 1)
+
+        self.game:achieve("poweroff")
+
+        self:sleep(3)
+
+        self.game:endGame()
     end)
 end
 
@@ -334,7 +445,7 @@ function Scenario:initialize(chat)
     self:registerSpeaker(1, r.colors.speaker1, "left")
     self:registerSpeaker(2, r.colors.speaker2, "right", 1.5)
 
-    self:gotoState("Intro")
+    self:gotoState("Father")
 end
 
 function Scenario:update(dt)
@@ -358,7 +469,9 @@ Scenario:addState("MorseYes", MorseYes)
 Scenario:addState("MorseNo", MorseNo)
 Scenario:addState("MorseEw", MorseEw)
 Scenario:addState("MorseGarbage", MorseGarbage)
+Scenario:addState("Name", Name)
 Scenario:addState("Toy", Toy)
 Scenario:addState("Flounder", Flounder)
+Scenario:addState("Father", Father)
 
 return Scenario

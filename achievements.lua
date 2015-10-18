@@ -10,32 +10,40 @@ local h = lg.getHeight()
 local list = {
     "missed",
     "shy",
+    "talker",
+    "toy",
     "telegraphist",
     "haha",
-    "ew"
+    "ew",
+    "poweroff",
+    "final",
 }
 
 local titles = {
     missed = "Упущенные возможности",
     shy = "Скромняша",
-    telegraphist = "Радист",
+    talker = "Болтун",
+    toy = "Игрушка",
+    telegraphist = ".-. .- -.. .. ... -",
     haha = "Ха-ха",
-    ew = "Фи"
+    ew = "Фи",
+    poweroff = "", -- TODO: make a clever title
+    final = "", -- TODO: same
 }
 
 local Achievements = class("Achievements")
 
-function Achievements:initialize(height, achieved)
+function Achievements:initialize(height, got)
     self.height = height or h
-    self.achieved = achieved or {}
+    self.got = got or {}
     self.y = -self.height
 
     self.tweens = flux.group()
 end
 
 function Achievements:achieve(id)
-    if not self.achieved[id] then
-        self.achieved[id] = true
+    if not self.got[id] then
+        self.got[id] = true
         return true, titles[id]
     else
         return false, titles[id]
@@ -43,16 +51,15 @@ function Achievements:achieve(id)
 end
 
 function Achievements:isComplete()
-    local complete = true
+    local left = 0
 
     for _, v in ipairs(list) do
-        if not self.achieved[v] then
-            complete = false
-            break
+        if not self.got[v] then
+            left = left + 1
         end
     end
 
-    return complete
+    return left == 0, left
 end
 
 function Achievements:show()
@@ -79,7 +86,7 @@ function Achievements:draw()
         lg.setColor(r.colors.message)
 
         for i, v in ipairs(list) do
-            lg.print(("%d: %s"):format(i, self.achieved[v] and titles[v] or "???"), 20, i * 40)
+            lg.print(("%d: %s"):format(i, self.got[v] and titles[v] or "???"), 20, i * 40)
         end
 
         lg.pop()

@@ -275,8 +275,6 @@ function Morse:listen(dt)
             self:gotoState("MorseYes")
         elseif buffer == "нет" or buffer == "неа" then
             self:gotoState("MorseNo")
-        elseif buffer == "хуй" then
-            self:gotoState("MorseEw")
         elseif utf8.len(buffer) >= 3 then
             self:gotoState("MorseGarbage")
         end
@@ -321,27 +319,6 @@ function MorseNo:enteredState()
     end)
 end
 
-local MorseEw = {}
-
-function MorseEw:enteredState()
-    self.ew = true
-
-    self:runCoroutine(function ()
-        self:say(2, "...", 1)
-        self:say(1, "Фи, как некультурно!", 1)
-        self:say(1, "Еще и при детях.", 2)
-        self:say(2, "Хи-хи-хи.", 1.5)
-        self:say(1, "По крайней мере, нам теперь известно, что он знает азбуку Морзе.", 2)
-        self:say(1, "Ну, или только это слово.", 2)
-        self:say(2, "Можно попробовать дальше.", 2)
-        self:say(2, "Например, спросить, как его зовут.", 2)
-        self:say(2, "Только это, слышишь, давай в этот раз серьёзно!", 1.5)
-        self:say(2, "Как тебя зовут?", 1.5)
-
-        self:gotoState("Name")
-    end)
-end
-
 local MorseGarbage = {}
 
 function MorseGarbage:enteredState()
@@ -373,37 +350,7 @@ function Name:listen(dt)
         else
             self:say(2, ("\"%s\"..."):format(letter))
         end
-
-        if buffer == "хуй" then
-            self:gotoState("NameEw")
-        end
     end
-end
-
-local NameEw = {}
-
-function NameEw:enteredState()
-    self:runCoroutine(function ()
-        if self.ew then
-            self:say(2, "Эй, ну это уже не смешно!", 1)
-            self:say(1, "Видимо, он только это слово и знает.", 2)
-            self:say(1, "Всё ещё хочешь продолжить общение с ним?", 2)
-
-            self:gotoState("Father")
-
-        else
-            self.ew = true
-
-            self:say(2, "...", 1)
-            self:say(1, "Фи, как некультурно!", 1)
-            self:say(1, "Еще и при детях.", 2)
-            self:say(2, "Хи-хи-хи, это твоё имя что ли?", 2)
-            self:say(2, "Нет, давай еще раз, теперь уже серьёзно.", 2)
-            self:say(2, "Как тебя зовут?", 1.5)
-
-            self:gotoState("Name")
-        end
-    end)
 end
 
 local Toy = {}
@@ -568,10 +515,8 @@ Scenario:addState("Sentient", Sentient)
 Scenario:addState("Morse", Morse)
 Scenario:addState("MorseYes", MorseYes)
 Scenario:addState("MorseNo", MorseNo)
-Scenario:addState("MorseEw", MorseEw)
 Scenario:addState("MorseGarbage", MorseGarbage)
 Scenario:addState("Name", Name)
-Scenario:addState("NameEw", NameEw)
 Scenario:addState("Toy", Toy)
 Scenario:addState("Flounder", Flounder)
 Scenario:addState("Father", Father)

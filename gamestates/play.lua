@@ -28,7 +28,14 @@ function Play:enteredState()
     self.scenario = Scenario(self)
 
     self.achievements:hide()
-    self.hud:showMessage("[пробел] пищать")
+
+    self.try = (self.try or 0) + 1
+
+    if self.try == 1 then
+        self.hud:showMessage("[пробел] пищать")
+    elseif self.try == 2 then
+        self.hud:showMessage("[s] ускорить текст")
+    end
 end
 
 function Play:achieve(id)

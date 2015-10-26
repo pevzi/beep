@@ -27,7 +27,7 @@ function HUD:showMessage(text)
     self.message.y = self.height
 
     self.tweens:to(self.message, 0.5, {y = self.height * 0.25}):ease("quadout")
-            :after(self.message, 1,   {y = self.height}):delay(2)
+            :after(self.message, 0.5, {y = self.height}):ease("quadin"):delay(2)
 end
 
 function HUD:update(dt)

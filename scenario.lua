@@ -6,8 +6,8 @@ local input = require "input"
 local utf8 = require "utf8"
 
 local multiThreshold = 0.7
-local dahThreshold = 0.2
-local letterThreshold = 0.2
+local dahThreshold = 0.3
+local letterThreshold = 0.6
 
 local multiReader = readers.MultiReader(multiThreshold)
 local morseReader = readers.MorseReader(dahThreshold, letterThreshold)
@@ -448,7 +448,7 @@ function Father:enteredState()
         self:say(2, "Бе-бе-бе.", 2)
         self:say(2, "Отнесу я его своему бате!", 2)
         self:say(1, "Ещё чего выдумал!", 1)
-        self:say(2, "Не ну, а что?", 2)
+        self:say(2, "Не, ну а что?", 2)
         self:say(2, "Он любит всякие странные электронные штуки.", 2)
         self:say(2, "Пусть разберётся, что это за робот такой.", 2)
         -- TODO: ...?
@@ -551,7 +551,7 @@ end
 
 function Scenario:update(dt)
     if input.fast:isDown() then
-        dt = dt * 5
+        dt = dt * 10
     end
 
     Scenario.super.update(self, dt)

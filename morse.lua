@@ -1,4 +1,4 @@
-return setmetatable({
+return {
     [".-"] = "а",
     ["-..."] = "б",
     [".--"] = "в",
@@ -31,4 +31,4 @@ return setmetatable({
     ["..-.."] = "э",
     ["..--"] = "ю",
     [".-.-"] = "я"
-}, {__index = function () return "" end})
+}

@@ -26,7 +26,7 @@ function MorseReader:update(dt)
     local letter
 
     if not input.beep:isDown() and self.code ~= "" and self.duration > self.letterThreshold then
-        letter = morse[self.code]
+        letter = morse[self.code] or ""
         self.buffer = self.buffer .. letter
         self.code = ""
     end

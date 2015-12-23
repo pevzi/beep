@@ -49,7 +49,7 @@ function Near:enteredState()
 end
 
 function Near:listen(dt)
-    if input.beep:isDown() then
+    if self.game.beeping then
         self:gotoState("Noticed")
     end
 end
@@ -83,7 +83,7 @@ function Alert:enteredState()
 end
 
 function Alert:listen(dt)
-    if input.beep:isDown() then
+    if self.game.beeping then
         self:gotoState("Really")
     end
 end
@@ -155,7 +155,7 @@ function Really:enteredState()
 end
 
 function Really:listen(dt)
-    if input.beep:isDown() then
+    if self.game.beeping then
         self.beepTime = self.beepTime + dt
 
         if self.beepTime > 3 and not self.talker then
@@ -190,7 +190,7 @@ end
 function Twice:listen(dt)
     self.waiting = self.waiting + dt
 
-    if input.beep:isDown() then
+    if self.game.beeping then
         self.waiting = 0
     elseif self.waiting > 5 then
         self.waiting = 0
@@ -428,7 +428,7 @@ function Father:enteredState()
 end
 
 function Father:listen(dt)
-    if input.beep:isDown() then
+    if self.game.beeping then
         self.beepTime = self.beepTime + dt
     end
 end
@@ -480,7 +480,7 @@ function End:enteredState()
 end
 
 function End:listen(dt)
-    if input.beep:isDown() then
+    if self.game.beeping then
         self.beepTime = self.beepTime + dt
     end
 end

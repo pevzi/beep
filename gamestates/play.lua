@@ -36,6 +36,8 @@ function Play:enteredState()
     elseif self.try == 2 then
         self.hud:showMessage("[s] ускорить текст")
     end
+
+    self.beeping = false
 end
 
 function Play:achieve(id)
@@ -47,14 +49,18 @@ function Play:achieve(id)
 end
 
 function Play:endGame()
+    beep:stop()
     self:gotoState("GameOver")
 end
 
 function Play:update(dt)
     if input.beep:pressed() then
         beep:play()
+        self.beeping = true
+
     elseif input.beep:released() then
         beep:stop()
+        self.beeping = false
     end
 
     if input.quit:pressed() then

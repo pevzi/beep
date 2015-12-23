@@ -1,6 +1,6 @@
 local tactile = require "libs.tactile"
 
-local keySpace = tactile.key " "
+local keySpace = tactile.key "space"
 local keyEscape = tactile.key "escape"
 local keyS = tactile.key "s"
 local keyR = tactile.key "r"

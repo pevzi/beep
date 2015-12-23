@@ -32,7 +32,7 @@ function Chat:say(text, color, align, pitch)
     table.insert(self.messages, message)
 
     local _, lines = r.fonts.main:getWrap(text, self.width)
-    local height = lines * r.fonts.main:getHeight()
+    local height = #lines * r.fonts.main:getHeight()
 
     self.contentHeight = self.contentHeight + height + messageDistance
 

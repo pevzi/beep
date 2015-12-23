@@ -15,6 +15,10 @@ function love.load()
     game = Game()
 end
 
+function love.focus(f)
+    game:focus(f)
+end
+
 function love.update(dt)
     input.update()
 

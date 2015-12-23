@@ -15,7 +15,8 @@ local colors = {
     messageDark = {54, 79, 45},
     barDit = {208, 208, 208},
     barDah = {135, 164, 103},
-    achievementsBackground = {15, 18, 10}
+    achievementsBackground = {15, 18, 10},
+    pauseOverlay = {0, 0, 0, 150}
 }
 
 return {

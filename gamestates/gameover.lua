@@ -21,7 +21,7 @@ function GameOver:update(dt)
         self:gotoState("Play")
     end
 
-    if input.quit:pressed() then
+    if input.pause:pressed() or input.quit:pressed() then
         love.event.quit()
     end
 

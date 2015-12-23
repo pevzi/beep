@@ -53,6 +53,17 @@ function Play:endGame()
     self:gotoState("GameOver")
 end
 
+function Play:pauseGame()
+    beep:stop()
+    self:pushState("Pause")
+end
+
+function Play:focus(f)
+    if not f then
+        self:pauseGame()
+    end
+end
+
 function Play:update(dt)
     if input.beep:pressed() then
         beep:play()
@@ -63,8 +74,8 @@ function Play:update(dt)
         self.beeping = false
     end
 
-    if input.quit:pressed() then
-        self:endGame()
+    if input.pause:pressed() then
+        self:pauseGame()
     end
 
     self.chat:update(dt)

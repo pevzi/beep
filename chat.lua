@@ -24,10 +24,25 @@ function Chat:initialize(l, t, w, h)
     self.contentHeight = 0
     self.scroll = 0
 
+    self.speakers = {}
+
     self.tweens = flux.group()
 end
 
-function Chat:say(text, color, align, pitch)
+function Chat:registerSpeaker(id, color, align, pitch)
+    self.speakers[id] = {color = color, align = align, pitch = pitch}
+end
+
+function Chat:unregisterSpeaker(id)
+    self.speakers[id] = nil
+end
+
+function Chat:say(id, text)
+    local speaker = self.speakers[id]
+    self:sayCustom(text, speaker.color, speaker.align, speaker.pitch)
+end
+
+function Chat:sayCustom(text, color, align, pitch)
     local message = {text = text, color = color, align = align, y = self.contentHeight}
     table.insert(self.messages, message)
 

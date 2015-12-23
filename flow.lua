@@ -6,7 +6,6 @@ local Flow = class("Flow"):include(Stateful)
 
 function Flow:initialize(game)
     self.game = game
-    self.speakers = {} -- TODO: move speaker registration to Chat
 
     self.continues = {}
     self.workers = {}
@@ -68,21 +67,12 @@ function Flow:resumeCoroutine()
     return false
 end
 
-function Flow:registerSpeaker(id, color, align, pitch)
-    self.speakers[id] = {color = color, align = align, pitch = pitch}
-end
-
-function Flow:unregisterSpeaker(id)
-    self.speakers[id] = nil
-end
-
 function Flow:say(id, text, delay)
     if delay then
         self:sleep(delay)
     end
 
-    local speaker = self.speakers[id]
-    self.game.chat:say(text, speaker.color, speaker.align, speaker.pitch)
+    self.game.chat:say(id, text)
 end
 
 function Flow:sleep(duration)

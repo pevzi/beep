@@ -490,8 +490,8 @@ local Scenario = Flow:subclass("Scenario")
 function Scenario:initialize(chat)
     Scenario.super.initialize(self, chat)
 
-    self:registerSpeaker(1, r.colors.speaker1, "left")
-    self:registerSpeaker(2, r.colors.speaker2, "right", 1.5)
+    self.game.chat:registerSpeaker(1, r.colors.speaker1, "left")
+    self.game.chat:registerSpeaker(2, r.colors.speaker2, "right", 1.5)
 
     self:gotoState("Intro")
 end

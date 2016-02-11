@@ -14,6 +14,32 @@ local letterThreshold = 0.6
 local multiReader = readers.MultiReader(multiThreshold)
 local morseReader = readers.MorseReader(dahThreshold, letterThreshold)
 
+------------------------------------------
+
+local achievementList = {
+    "missed",
+    "shy",
+    "talker",
+    "toy",
+    "telegraphist",
+    "haha",
+    "poweroff",
+    "final"
+}
+
+local achievementTitles = {
+    missed = "Упущенные возможности",
+    shy = "Скромняша",
+    talker = "Болтун",
+    toy = "Игрушка",
+    telegraphist = ".-. .- -.. .. ... -",
+    haha = "Ха-ха",
+    poweroff = "Кина не будет",
+    final = "Добро пожаловать домой"
+}
+
+------------------------------------------
+
 local Intro = {}
 
 function Intro:act()
@@ -484,6 +510,8 @@ function Scenario:initialize(game)
 
     self.game.chat:registerSpeaker(1, r.colors.speaker1, "left")
     self.game.chat:registerSpeaker(2, r.colors.speaker2, "right", 1.5)
+
+    self.game.achievements:setList(achievementList, achievementTitles)
 
     self.timer = Timer()
 

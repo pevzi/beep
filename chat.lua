@@ -42,14 +42,14 @@ function Chat:say(id, text)
     self:sayCustom(text, speaker.color, speaker.align, speaker.pitch)
 end
 
-function Chat:sayCustom(text, color, align, pitch)
-    local message = {text = text, color = color, align = align, y = self.contentHeight}
+function Chat:sayCustom(textstring, color, align, pitch)
+    local text = lg.newText(r.fonts.main)
+    text:setf(textstring, self.width, align)
+
+    local message = {text = text, color = color, y = self.contentHeight}
     table.insert(self.messages, message)
 
-    local _, lines = r.fonts.main:getWrap(text, self.width)
-    local height = #lines * r.fonts.main:getHeight()
-
-    self.contentHeight = self.contentHeight + height + messageDistance
+    self.contentHeight = self.contentHeight + text:getHeight() + messageDistance
 
     if self.contentHeight > self.height then
         local newScroll = self.height - self.contentHeight
@@ -80,7 +80,7 @@ function Chat:draw()
         local message = self.messages[i]
 
         lg.setColor(message.color)
-        lg.printf(message.text, 0, message.y, self.width, message.align)
+        lg.draw(message.text, 0, message.y)
 
         if message.y < self.contentHeight - self.height + self.scroll then
             break

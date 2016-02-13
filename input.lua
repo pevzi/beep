@@ -1,30 +1,20 @@
 local tactile = require "libs.tactile"
 
-local keySpace = tactile.key "space"
-local keyEscape = tactile.key "escape"
-local keyQ = tactile.key "q"
-local keyS = tactile.key "s"
-local keyR = tactile.key "r"
-
-local beep = tactile.newButton(keySpace)
-local pause = tactile.newButton(keyEscape)
-local quit = tactile.newButton(keyQ)
-local fast = tactile.newButton(keyS)
-local reset = tactile.newButton(keyR)
+local actions = {
+    beep = tactile.newButton(tactile.key "space"),
+    pause = tactile.newButton(tactile.key "escape"),
+    quit = tactile.newButton(tactile.key "q"),
+    fast = tactile.newButton(tactile.key "s"),
+    reset = tactile.newButton(tactile.key "r")
+}
 
 local function update()
-    beep:update()
-    pause:update()
-    quit:update()
-    fast:update()
-    reset:update()
+    for _, action in pairs(actions) do
+        action:update()
+    end
 end
 
-return {
+return setmetatable({
     update = update,
-    beep = beep,
-    pause = pause,
-    quit = quit,
-    fast = fast,
-    reset = reset
-}
+    actions = actions
+}, {__index = actions})

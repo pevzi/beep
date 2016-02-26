@@ -14,29 +14,7 @@ local letterThreshold = 0.6
 local multiReader = readers.MultiReader(multiThreshold)
 local morseReader = readers.MorseReader(dahThreshold, letterThreshold)
 
-------------------------------------------
-
-local achievementList = {
-    "missed",
-    "shy",
-    "talker",
-    "toy",
-    "telegraphist",
-    "haha",
-    "poweroff",
-    "final"
-}
-
-local achievementTitles = {
-    missed = "Упущенные возможности",
-    shy = "Скромняша",
-    talker = "Болтун",
-    toy = "Игрушка",
-    telegraphist = ".-. .- -.. .. ... -",
-    haha = "Ха-ха",
-    poweroff = "Кина не будет",
-    final = "Добро пожаловать домой"
-}
+local initialState = "Intro"
 
 ------------------------------------------
 
@@ -480,6 +458,30 @@ end
 
 ------------------------------------------
 
+local achievementList = {
+    "missed",
+    "shy",
+    "talker",
+    "toy",
+    "telegraphist",
+    "haha",
+    "poweroff",
+    "final"
+}
+
+local achievementTitles = {
+    missed = "Упущенные возможности",
+    shy = "Скромняша",
+    talker = "Болтун",
+    toy = "Игрушка",
+    telegraphist = ".-. .- -.. .. ... -",
+    haha = "Ха-ха",
+    poweroff = "Кина не будет",
+    final = "Добро пожаловать домой"
+}
+
+------------------------------------------
+
 local function resume(co, ...)
     local ok, msg = coroutine.resume(co, ...)
 
@@ -515,7 +517,7 @@ function Scenario:initialize(game)
 
     self.timer = Timer()
 
-    self:runState("Intro")
+    self:runState(initialState)
 end
 
 function Scenario:runState(stateName, ...)

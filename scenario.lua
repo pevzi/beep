@@ -554,10 +554,6 @@ function Scenario:say(id, text, delay)
 end
 
 function Scenario:update(dt)
-    if input.fast:isDown() then
-        dt = dt * 10
-    end
-
     if self.worker and self.worker:update(dt) then
         self.worker = nil
         resume(self.co)

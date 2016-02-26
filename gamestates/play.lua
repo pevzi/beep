@@ -65,13 +65,20 @@ function Play:focus(f)
 end
 
 function Play:update(dt)
-    if input.beep:pressed() then
-        beep:play()
-        self.beeping = true
+    self.fast = input.fast:isDown()
 
-    elseif input.beep:released() then
-        beep:stop()
+    if input.beep:pressed() then
+        self.beeping = true
+    end
+
+    if not input.beep:isDown() or self.fast then
         self.beeping = false
+    end
+
+    if self.beeping then
+        beep:play()
+    else
+        beep:stop()
     end
 
     if input.pause:pressed() then
@@ -80,7 +87,7 @@ function Play:update(dt)
 
     self.chat:update(dt)
     self.hud:update(dt)
-    self.scenario:update(dt)
+    self.scenario:update(self.fast and dt * 10 or dt)
     self.achievements:update(dt)
 end
 

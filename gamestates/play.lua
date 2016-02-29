@@ -1,5 +1,4 @@
 local r = require "resources"
-local u = require "useful"
 local input = require "input"
 local Chat = require "chat"
 local HUD = require "hud"

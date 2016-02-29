@@ -1,10 +1,13 @@
 local r = require "resources"
-local u = require "useful"
 
 local class = require "libs.middleclass"
 local flux = require "libs.flux"
 
 local lg = love.graphics
+
+local function clamp(x, min, max)
+    return x < min and min or (x > max and max or x)
+end
 
 local HUD = class("HUD")
 
@@ -21,8 +24,6 @@ function HUD:initialize(x, y, width, height)
 end
 
 function HUD:showMessage(text)
-    -- TODO: make a message queue
-
     self.message.text = text
     self.message.y = self.height
 
@@ -56,7 +57,7 @@ function HUD:draw()
             lg.line(w * 0.6, h * 0.5, w * 0.63, h * 0.5)
         end
 
-        lg.arc("fill", w * 0.5, h * 0.5, h * 0.4, 0, u.clamp(self.morseBar, 0, 1) * math.pi * 2)
+        lg.arc("fill", w * 0.5, h * 0.5, h * 0.4, 0, clamp(self.morseBar, 0, 1) * math.pi * 2)
 
     end
 

@@ -11,13 +11,15 @@ end
 
 local HUD = class("HUD")
 
-function HUD:initialize(x, y, width, height)
-    self.x = x
-    self.y = y
-    self.width = width
+function HUD:initialize(game, height)
+    self.game = game
+
+    self.x = 0
+    self.y = lg.getHeight() - height
+    self.width = lg.getWidth()
     self.height = height
 
-    self.message = {x = width * 0.05, y = height, text = ""}
+    self.message = {x = self.width * 0.05, y = self.height, text = ""}
     self.morseBar = 0
 
     self.tweens = flux.group()
@@ -46,10 +48,10 @@ function HUD:draw()
     lg.setColor(r.colors.message)
     lg.print(self.message.text, self.message.x, self.message.y)
 
-    if self.morseBar > 0 then
+    if self.game.morseReader.value > 0 then
         lg.setLineWidth(4)
 
-        if self.morseBar < 1 then
+        if self.game.morseReader.value < 1 then
             lg.setColor(r.colors.barDit)
             lg.circle("fill", w * 0.6, h * 0.5, 2)
         else
@@ -57,7 +59,7 @@ function HUD:draw()
             lg.line(w * 0.6, h * 0.5, w * 0.63, h * 0.5)
         end
 
-        lg.arc("fill", w * 0.5, h * 0.5, h * 0.4, 0, clamp(self.morseBar, 0, 1) * math.pi * 2)
+        lg.arc("fill", w * 0.5, h * 0.5, h * 0.4, 0, clamp(self.game.morseReader.value, 0, 1) * math.pi * 2)
 
     end
 

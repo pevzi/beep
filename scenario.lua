@@ -2,17 +2,9 @@ local class = require "libs.middleclass"
 local Stateful = require "libs.stateful"
 
 local r = require "resources"
-local readers = require "readers"
 local input = require "input"
 
 local utf8 = require "utf8"
-
-local multiThreshold = 0.7
-local dahThreshold = 0.3
-local letterThreshold = 0.6
-
-local multiReader = readers.MultiReader(multiThreshold)
-local morseReader = readers.MorseReader(dahThreshold, letterThreshold)
 
 local initialState = "Intro"
 
@@ -164,6 +156,10 @@ end
 
 local Twice = Scenario:addState("Twice")
 
+function Twice:enteredState()
+    self.game.multiReader:reset()
+end
+
 function Twice:act()
     self.tries = 0
     self.waiting = 0
@@ -186,9 +182,9 @@ function Twice:listen(dt)
         self.timer:set(5)
     end
 
-    local beeps = multiReader:update(dt)
+    local done, beeps = self.game.multiReader:update(dt)
 
-    if beeps then
+    if done then
         self.tries = self.tries + 1
 
         if beeps == 2 then
@@ -243,13 +239,11 @@ end
 local Morse = Scenario:addState("Morse")
 
 function Morse:enteredState()
-    morseReader:reset()
+    self.game.morseReader:reset()
 end
 
 function Morse:listen(dt)
-    local letter, buffer, value = morseReader:update(dt)
-
-    self.game.hud.morseBar = value
+    local letter, buffer = self.game.morseReader:update(dt)
 
     if letter then
         if letter == "" then
@@ -271,7 +265,7 @@ end
 local MorseYes = Scenario:addState("MorseYes")
 
 function MorseYes:act()
-    self:say(2, ("Он сказал \"%s\"!"):format(morseReader.buffer), 1)
+    self:say(2, ("Он сказал \"%s\"!"):format(self.game.morseReader.buffer), 1)
 
     self.game:achieve("telegraphist")
 
@@ -287,12 +281,12 @@ end
 local MorseNo = Scenario:addState("MorseNo")
 
 function MorseNo:act()
-    self:say(2, ("...%s?"):format(morseReader.buffer), 1)
+    self:say(2, ("...%s?"):format(self.game.morseReader.buffer), 1)
     self:say(2, "Он сказал азбукой Морзе, что он не знает азбуку Морзе?", 2)
 
     self.game:achieve("haha")
 
-    self:say(1, ("Ну, может, он знает только, как ответить \"%s\"."):format(morseReader.buffer), 2)
+    self:say(1, ("Ну, может, он знает только, как ответить \"%s\"."):format(self.game.morseReader.buffer), 2)
     self:say(1, "Или, если им всё-таки кто-то управляет, то просто подсмотрел только что.", 3)
     self:say(1, "Если так, то, чувствую, мы тут надолго застрянем.", 3)
     self:say(2, "Я думаю, всё равно стоит попробовать что-нибудь разузнать.", 2)
@@ -305,7 +299,7 @@ end
 local MorseGarbage = Scenario:addState("MorseGarbage")
 
 function MorseGarbage:act()
-    self:say(2, ("...%s?"):format(morseReader.buffer), 1)
+    self:say(2, ("...%s?"):format(self.game.morseReader.buffer), 1)
     self:say(1, "Пф.", 1)
     self:say(2, "Бессмыслица какая-то.", 2)
 
@@ -315,13 +309,11 @@ end
 local Name = Scenario:addState("Name")
 
 function Name:enteredState()
-    morseReader:reset()
+    self.game.morseReader:reset()
 end
 
 function Name:listen(dt)
-    local letter, buffer, value = morseReader:update(dt)
-
-    self.game.hud.morseBar = value
+    local letter, buffer = self.game.morseReader:update(dt)
 
     if letter then
         if utf8.len(buffer) > 3 then

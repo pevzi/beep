@@ -4,6 +4,7 @@ local Chat = require "chat"
 local HUD = require "hud"
 local Scenario = require "scenario"
 local Achievements = require "achievements"
+local readers = require "readers"
 
 local w = love.graphics.getWidth()
 local h = love.graphics.getHeight()
@@ -21,6 +22,9 @@ local Play = {}
 function Play:enteredState()
     love.graphics.setBackgroundColor(r.colors.background)
 
+    self.morseReader = readers.MorseReader()
+    self.multiReader = readers.MultiReader()
+
     if self.achievements then
         self.achievements:hide()
     else
@@ -28,7 +32,7 @@ function Play:enteredState()
     end
 
     self.chat = Chat(chatMargin, chatMargin, w - chatMargin * 2, h - chatMargin * 2 - hudHeight)
-    self.hud = HUD(0, h - hudHeight, w, hudHeight)
+    self.hud = HUD(self, hudHeight)
     self.scenario = Scenario(self)
 
     self.try = (self.try or 0) + 1

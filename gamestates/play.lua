@@ -21,12 +21,15 @@ local Play = {}
 function Play:enteredState()
     love.graphics.setBackgroundColor(r.colors.background)
 
+    if self.achievements then
+        self.achievements:hide()
+    else
+        self.achievements = Achievements(h - hudHeight)
+    end
+
     self.chat = Chat(chatMargin, chatMargin, w - chatMargin * 2, h - chatMargin * 2 - hudHeight)
     self.hud = HUD(0, h - hudHeight, w, hudHeight)
-    self.achievements = self.achievements or Achievements(h - hudHeight)
     self.scenario = Scenario(self)
-
-    self.achievements:hide()
 
     self.try = (self.try or 0) + 1
 
@@ -47,13 +50,19 @@ function Play:achieve(id)
     end
 end
 
-function Play:endGame()
+function Play:exitedState()
     beep:stop()
+end
+
+function Play:pausedState()
+    beep:stop()
+end
+
+function Play:endGame()
     self:gotoState("GameOver")
 end
 
 function Play:pauseGame()
-    beep:stop()
     self:pushState("Pause")
 end
 

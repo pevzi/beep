@@ -45,22 +45,37 @@ function HUD:draw()
 
     lg.translate(self.x, self.y)
 
+    -- message
+
     lg.setColor(r.colors.message)
     lg.print(self.message.text, self.message.x, self.message.y)
 
-    if self.game.morseReader.value > 0 then
-        lg.setLineWidth(4)
+    -- morse
 
+    if self.game.morseReader.value > 0 then
         if self.game.morseReader.value < 1 then
             lg.setColor(r.colors.barDit)
             lg.circle("fill", w * 0.6, h * 0.5, 2)
         else
             lg.setColor(r.colors.barDah)
+            lg.setLineWidth(4)
             lg.line(w * 0.6, h * 0.5, w * 0.63, h * 0.5)
         end
 
         lg.arc("fill", w * 0.5, h * 0.5, h * 0.4, 0, clamp(self.game.morseReader.value, 0, 1) * math.pi * 2)
+    end
 
+    -- fast-forward
+
+    if self.game.fast then
+        lg.setColor(r.colors.message)
+
+        local x = w * 0.9
+        local y = h * 0.5
+        local r = self.height * 0.18
+
+        lg.circle("fill", x,           y, r, 3)
+        lg.circle("fill", x + r * 1.3, y, r, 3)
     end
 
     lg.pop()

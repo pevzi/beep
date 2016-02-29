@@ -55,6 +55,7 @@ function Play:achieve(id)
 end
 
 function Play:exitedState()
+    self.fast = false
     beep:stop()
 end
 

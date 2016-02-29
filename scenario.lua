@@ -16,9 +16,11 @@ local morseReader = readers.MorseReader(dahThreshold, letterThreshold)
 
 local initialState = "Intro"
 
+local Scenario = class("Scenario"):include(Stateful)
+
 ------------------------------------------
 
-local Intro = {}
+local Intro = Scenario:addState("Intro")
 
 function Intro:act()
     local _, left = self.game.achievements:isComplete()
@@ -36,7 +38,7 @@ function Intro:act()
     self:runState("Near")
 end
 
-local Near = {}
+local Near = Scenario:addState("Near")
 
 function Near:act()
     self:say(1, "Хоть компас бы с собой взял.", 4)
@@ -56,7 +58,7 @@ function Near:listen(dt)
     end
 end
 
-local Noticed = {}
+local Noticed = Scenario:addState("Noticed")
 
 function Noticed:act()
     self.noticed = true
@@ -70,7 +72,7 @@ function Noticed:act()
     self:runState("Alert")
 end
 
-local Alert = {}
+local Alert = Scenario:addState("Alert")
 
 function Alert:act()
     self:say(1, "У тебя глюки просто.", 2)
@@ -86,7 +88,7 @@ function Alert:listen(dt)
     end
 end
 
-local Away = {}
+local Away = Scenario:addState("Away")
 
 function Away:act()
     self:sleep(1)
@@ -106,7 +108,7 @@ function Away:act()
     self.game:endGame()
 end
 
-local Really = {}
+local Really = Scenario:addState("Really")
 
 function Really:act()
     self.beepTime = 0
@@ -160,7 +162,7 @@ function Really:listen(dt)
     end
 end
 
-local Twice = {}
+local Twice = Scenario:addState("Twice")
 
 function Twice:act()
     self.tries = 0
@@ -201,7 +203,7 @@ function Twice:listen(dt)
     end
 end
 
-local Sentient = {}
+local Sentient = Scenario:addState("Sentient")
 
 function Sentient:act()
     self:say(2, "Слышала?!")
@@ -238,7 +240,7 @@ function Sentient:act()
     self:runState("Morse")
 end
 
-local Morse = {}
+local Morse = Scenario:addState("Morse")
 
 function Morse:enteredState()
     morseReader:reset()
@@ -266,7 +268,7 @@ function Morse:listen(dt)
     end
 end
 
-local MorseYes = {}
+local MorseYes = Scenario:addState("MorseYes")
 
 function MorseYes:act()
     self:say(2, ("Он сказал \"%s\"!"):format(morseReader.buffer), 1)
@@ -282,7 +284,7 @@ function MorseYes:act()
     self:runState("Name")
 end
 
-local MorseNo = {}
+local MorseNo = Scenario:addState("MorseNo")
 
 function MorseNo:act()
     self:say(2, ("...%s?"):format(morseReader.buffer), 1)
@@ -300,7 +302,7 @@ function MorseNo:act()
     self:runState("Name")
 end
 
-local MorseGarbage = {}
+local MorseGarbage = Scenario:addState("MorseGarbage")
 
 function MorseGarbage:act()
     self:say(2, ("...%s?"):format(morseReader.buffer), 1)
@@ -310,7 +312,7 @@ function MorseGarbage:act()
     self:runState("Father")
 end
 
-local Name = {}
+local Name = Scenario:addState("Name")
 
 function Name:enteredState()
     morseReader:reset()
@@ -332,7 +334,7 @@ function Name:listen(dt)
     end
 end
 
-local Toy = {}
+local Toy = Scenario:addState("Toy")
 
 function Toy:act()
     self:say(1, "Что-то мне подсказывает, что это просто тупо игрушка какая-нибудь.", 2)
@@ -347,7 +349,7 @@ function Toy:act()
     self:runState("Father")
 end
 
-local Flounder = {}
+local Flounder = Scenario:addState("Flounder")
 
 function Flounder:act()
     self:say(2, "Ой, подожди.")
@@ -358,7 +360,7 @@ function Flounder:act()
     self:runState("Father")
 end
 
-local Father = {}
+local Father = Scenario:addState("Father")
 
 function Father:act()
     self.beepTime = 0
@@ -406,7 +408,7 @@ function Father:listen(dt)
     end
 end
 
-local End = {}
+local End = Scenario:addState("End")
 
 function End:act()
     self.beepTime = 0
@@ -505,8 +507,6 @@ function Timer:update(dt)
     return self.t <= 0
 end
 
-local Scenario = class("Scenario"):include(Stateful)
-
 function Scenario:initialize(game)
     self.game = game
 
@@ -565,23 +565,5 @@ function Scenario:update(dt)
         self:listen(dt)
     end
 end
-
-Scenario:addState("Intro", Intro)
-Scenario:addState("Near", Near)
-Scenario:addState("Noticed", Noticed)
-Scenario:addState("Alert", Alert)
-Scenario:addState("Away", Away)
-Scenario:addState("Really", Really)
-Scenario:addState("Twice", Twice)
-Scenario:addState("Sentient", Sentient)
-Scenario:addState("Morse", Morse)
-Scenario:addState("MorseYes", MorseYes)
-Scenario:addState("MorseNo", MorseNo)
-Scenario:addState("MorseGarbage", MorseGarbage)
-Scenario:addState("Name", Name)
-Scenario:addState("Toy", Toy)
-Scenario:addState("Flounder", Flounder)
-Scenario:addState("Father", Father)
-Scenario:addState("End", End)
 
 return Scenario

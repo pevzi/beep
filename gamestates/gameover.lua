@@ -9,11 +9,7 @@ end
 
 function GameOver:update(dt)
     if input.beep:pressed() then
-        if self.achievements:isComplete() then
-            love.event.quit()
-        else
-            self:gotoState("Play")
-        end
+        self:gotoState("Play")
     end
 
     if input.reset:pressed() and self.achievements:isComplete() then

@@ -4,7 +4,7 @@ local GameOver = {}
 
 function GameOver:enteredState()
     self.achievements:show()
-    self.hud:showMessage(self.achievements:isComplete() and "Спасибо за игру. [R] начать заново" or "[пробел] попробовать еще раз")
+    self.hud:showMessage(self.achievements:isComplete() and "Спасибо за игру. [R] начать заново" or "[пробел] попробовать ещё раз")
 end
 
 function GameOver:update(dt)

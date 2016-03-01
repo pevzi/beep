@@ -1,6 +1,11 @@
 setmetatable(_G, {
-    __index = function (k) error('referenced an undefined variable', 2) end,
-    __newindex = function (k, v) error('new global variables disabled', 2) end
+    __index = function (t, k)
+        error(("attempt to access an undefined global variable '%s'"):format(k), 2)
+    end,
+
+    __newindex = function (t, k, v)
+        error(("attempt to assign to an undefined global variable '%s'"):format(k), 2)
+    end
 })
 
 local r = require "resources"

@@ -441,7 +441,7 @@ function End:act()
 
     self:sleep(3)
 
-    self.game:endGame()
+    self.game:endGame(true)
 end
 
 function End:listen(dt)

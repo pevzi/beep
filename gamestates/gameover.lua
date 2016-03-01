@@ -2,9 +2,22 @@ local input = require "input"
 
 local GameOver = {}
 
-function GameOver:enteredState()
+function GameOver:enteredState(final)
     self.achievements:show()
-    self.hud:showMessage(self.achievements:isComplete() and "Спасибо за игру. [R] начать заново" or "[пробел] попробовать ещё раз")
+
+    local message
+
+    if self.achievements:isComplete() then
+        if final then
+            message = "Спасибо за игру. [R] начать заново"
+        else
+            message = "[R] начать заново"
+        end
+    else
+        message = "[пробел] попробовать ещё раз"
+    end
+
+    self.hud:showMessage(message)
 end
 
 function GameOver:update(dt)

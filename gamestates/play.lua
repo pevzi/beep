@@ -63,8 +63,8 @@ function Play:pausedState()
     beep:stop()
 end
 
-function Play:endGame()
-    self:gotoState("GameOver")
+function Play:endGame(final)
+    self:gotoState("GameOver", final)
 end
 
 function Play:pauseGame()

@@ -29,6 +29,8 @@ function HUD:showMessage(text)
     self.message.text = text
     self.message.y = self.height
 
+    self.tweens = flux.group() -- "clear" existing tweens
+
     self.tweens:to(self.message, 0.5, {y = self.height * 0.25}):ease("quadout")
             :after(self.message, 0.5, {y = self.height}):ease("quadin"):delay(2)
 end

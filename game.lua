@@ -11,6 +11,10 @@ function Game:initialize()
     self:gotoState("Play")
 end
 
+function Game:focus(f) end
+function Game:update(dt) end
+function Game:draw() end
+
 Game:addState("Play", Play)
 Game:addState("GameOver", GameOver)
 Game:addState("Pause", Pause)

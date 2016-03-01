@@ -16,9 +16,7 @@ function love.load()
 end
 
 function love.focus(f)
-    if game.focus then
-        game:focus(f)
-    end
+    game:focus(f)
 end
 
 function love.update(dt)
